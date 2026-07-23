@@ -1,0 +1,14 @@
+{
+  "name": "emailagent",
+  "version": "0.1.0",
+  "private": true,
+  "description": "AI work-order automation: Gmail -> Claude extraction -> review dashboard -> AppFolio",
+  "scripts": {
+    "dev": "concurrently -n backend,frontend -c magenta,cyan \"npm:dev:backend\" \"npm:dev:frontend\"",
+    "dev:backend": "cd backend && .venv/Scripts/python -m uvicorn app.main:app --reload --port 8000",
+    "dev:frontend": "cd frontend && npm run dev"
+  },
+  "devDependencies": {
+    "concurrently": "9.1.0"
+  }
+}

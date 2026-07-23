@@ -1,0 +1,14 @@
+fastapi==0.115.0
+uvicorn[standard]==0.30.0
+httpx>=0.28,<0.29          # >=0.28 for google-genai; supabase>=2.15 tolerates it
+supabase>=2.15.0           # 2.5.0 pinned gotrue<httpx0.26, conflicting with google-genai
+python-dotenv==1.0.0
+pydantic>=2.7              # floor; let newer supabase/google-genai pull what they need
+pydantic-settings>=2.3
+apscheduler==3.10.4
+anthropic>=0.39.0
+google-genai>=0.3.0
+playwright==1.58.0
+google-api-python-client==2.137.0
+google-auth>=2.32.0        # >=; google-genai needs a newer google-auth
+google-auth-oauthlib==1.2.1
