@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>New Work Order — PropertyManager (mock)</title>
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: "Segoe UI", system-ui, sans-serif; background: #eef1f4; color: #1c2b39; }
+  .topbar { background: #0b5c6b; color: #fff; padding: 12px 24px; display: flex; align-items: center; gap: 12px; }
+  .topbar .logo { font-weight: 700; font-size: 17px; letter-spacing: .5px; }
+  .topbar .logo span { opacity: .7; font-weight: 400; font-size: 13px; }
+  .topbar .mock-tag { margin-left: auto; font-size: 11px; background: rgba(255,255,255,.15); padding: 3px 9px; border-radius: 5px; }
+  .crumbs { padding: 12px 24px; color: #5a6b7a; font-size: 13px; }
+  .sheet { max-width: 760px; margin: 8px auto 40px; background: #fff; border: 1px solid #d6dde4; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,.06); }
+  .sheet h1 { font-size: 20px; margin: 0; padding: 20px 28px; border-bottom: 1px solid #e6ebf0; }
+  form { padding: 24px 28px; }
+  .row { margin-bottom: 18px; }
+  .row.two { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+  label { display: block; font-size: 12px; font-weight: 600; color: #46586a; margin-bottom: 6px; text-transform: uppercase; letter-spacing: .03em; }
+  label .req { color: #c0392b; }
+  input, select, textarea { width: 100%; padding: 9px 11px; border: 1px solid #c3ccd6; border-radius: 6px; font-size: 14px; font-family: inherit; color: #1c2b39; }
+  input:focus, select:focus, textarea:focus { outline: none; border-color: #0b5c6b; box-shadow: 0 0 0 3px rgba(11,92,107,.12); }
+  textarea { min-height: 96px; resize: vertical; }
+  .file-note { font-size: 12px; color: #7a8794; margin-top: 6px; }
+  .actions { padding: 18px 28px; border-top: 1px solid #e6ebf0; display: flex; gap: 12px; justify-content: flex-end; background: #fafbfc; border-radius: 0 0 8px 8px; }
+  .btn { padding: 10px 20px; border-radius: 6px; border: 1px solid #c3ccd6; background: #fff; font-size: 14px; font-weight: 600; cursor: pointer; }
+  .btn.primary { background: #0b5c6b; border-color: #0b5c6b; color: #fff; }
+  .confirm { display: none; padding: 40px 28px; text-align: center; }
+  .confirm.show { display: block; }
+  .confirm .check { font-size: 46px; color: #1e9e6a; }
+  .confirm h2 { margin: 10px 0 6px; }
+  .confirm .ref { font-family: ui-monospace, monospace; background: #eef6f4; color: #0b5c6b; padding: 4px 10px; border-radius: 6px; font-weight: 700; }
+  .summary { margin: 18px auto 0; max-width: 420px; text-align: left; font-size: 13px; color: #46586a; }
+  .summary div { padding: 5px 0; border-bottom: 1px solid #eef1f4; }
+</style>
+</head>
+<body>
+  <div class="topbar">
+    <div class="logo">PropertyManager <span>/ Maintenance</span></div>
+    <div class="mock-tag">MOCK — stands in for AppFolio</div>
+  </div>
+  <div class="crumbs">Maintenance › Work Orders › <b>New Work Order</b></div>
+
+  <div class="sheet" id="sheet">
+    <h1>New Work Order</h1>
+    <form id="wo-form" onsubmit="return submitForm(event)">
+      <div class="row">
+        <label>Property <span class="req">*</span></label>
+        <input id="property" name="property" placeholder="Search property address…" autocomplete="off" />
+      </div>
+      <div class="row two">
+        <div>
+          <label>Unit</label>
+          <input id="unit" name="unit" />
+        </div>
+        <div>
+          <label>Resident</label>
+          <input id="resident" name="resident" />
+        </div>
+      </div>
+      <div class="row two">
+        <div>
+          <label>Category</label>
+          <select id="category" name="category">
+            <option value="">— Select —</option>
+            <option>Plumbing</option><option>Electrical</option><option>HVAC</option>
+            <option>Appliance</option><option>Pest</option><option>General</option><option>Other</option>
+          </select>
+        </div>
+        <div>
+          <label>Priority <span class="req">*</span></label>
+          <select id="priority" name="priority">
+            <option value="">— Select —</option>
+            <option>Low</option><option>Medium</option><option>High</option><option>Emergency</option>
+          </select>
+        </div>
+      </div>
+      <div class="row">
+        <label>Assigned Vendor</label>
+        <input id="vendor" name="vendor" />
+      </div>
+      <div class="row">
+        <label>Description <span class="req">*</span></label>
+        <textarea id="description" name="description"></textarea>
+      </div>
+      <div class="row">
+        <label>Attachments</label>
+        <input id="attachments" name="attachments" type="file" multiple />
+        <div class="file-note">Photos or PDFs from the request.</div>
+      </div>
+      <div class="actions">
+        <button type="button" class="btn">Cancel</button>
+        <button type="submit" class="btn primary" id="submit-wo">Create Work Order</button>
+      </div>
+    </form>
+
+    <div class="confirm" id="confirm">
+      <div class="check">✓</div>
+      <h2>Work Order Created</h2>
+      <div>Reference <span class="ref" id="wo-ref">WO-00000</span></div>
+      <div class="summary" id="summary"></div>
+    </div>
+  </div>
+
+<script>
+  function submitForm(e) {
+    e.preventDefault();
+    const g = (id) => document.getElementById(id).value || "—";
+    const ref = "WO-" + Math.floor(10000 + Math.random() * 89999);
+    document.getElementById("wo-ref").textContent = ref;
+    document.getElementById("summary").innerHTML =
+      `<div><b>Property:</b> ${g("property")}</div>` +
+      `<div><b>Unit:</b> ${g("unit")}</div>` +
+      `<div><b>Category:</b> ${g("category")}</div>` +
+      `<div><b>Priority:</b> ${g("priority")}</div>` +
+      `<div><b>Vendor:</b> ${g("vendor")}</div>` +
+      `<div><b>Description:</b> ${g("description")}</div>`;
+    document.getElementById("wo-form").style.display = "none";
+    document.querySelector(".actions").style.display = "none";
+    document.getElementById("confirm").classList.add("show");
+    return false;
+  }
+</script>
+</body>
+</html>

@@ -19,9 +19,19 @@ SCOPES = ["https://www.googleapis.com/auth/gmail.readonly"]
 
 # Gmail search query for candidate work orders. Broad on purpose — Claude makes the
 # final is_work_order call, so we favor recall here. `newer_than:2d` bounds the scan.
+# Broad recall net across subject AND body — Gemini makes the final is_work_order call,
+# so we'd rather over-fetch a few non-orders (it filters them) than miss a real one.
 CANDIDATE_QUERY = (
-    '(subject:("work order" OR "maintenance" OR "repair" OR "leak" OR "service request") '
-    'OR "maintenance request" OR "work order") newer_than:2d'
+    "newer_than:2d ("
+    '"work order" OR "maintenance" OR "maintenance request" OR "service request" OR '
+    "repair OR broken OR leak OR leaking OR flood OR flooding OR clog OR clogged OR "
+    '"no heat" OR "no hot water" OR heat OR furnace OR HVAC OR "air conditioning" OR AC OR '
+    "thermostat OR plumbing OR toilet OR sink OR faucet OR drain OR pipe OR "
+    "electrical OR outlet OR breaker OR wiring OR sparked OR "
+    "appliance OR dishwasher OR disposal OR refrigerator OR stove OR oven OR washer OR dryer OR "
+    "pest OR roach OR rodent OR mold OR "
+    "tenant OR resident OR unit OR apartment OR apt"
+    ")"
 )
 
 _service = None
